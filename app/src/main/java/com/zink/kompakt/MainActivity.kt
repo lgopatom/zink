@@ -48,6 +48,13 @@ private val placeholderStories = listOf(
     "Anchorhead.z5",
 )
 
+/**
+ * Strips the .z3/.z4/.z5 extension for display. The real filename (with
+ * extension) is what gets passed to the engine once Milestone 2 wires that up.
+ */
+private fun displayTitle(filename: String): String =
+    filename.replace(Regex("\\.z[345]$", RegexOption.IGNORE_CASE), "")
+
 @Composable
 private fun LibraryScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -60,9 +67,9 @@ private fun LibraryScreen() {
         DashedDivider()
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(placeholderStories) { title ->
+            items(placeholderStories) { filename ->
                 TextMMD(
-                    text = title,
+                    text = displayTitle(filename),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
                     .fillMaxWidth()
