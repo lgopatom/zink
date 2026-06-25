@@ -3,10 +3,10 @@ package com.zink.kompakt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.ThemeMMD
-import com.mudita.mmd.components.buttons.ButtonMMD
+import com.mudita.mmd.components.divider.HorizontalDividerMMD
 import com.mudita.mmd.components.text.TextMMD
 
 /**
@@ -50,15 +50,18 @@ private fun LibraryScreen() {
             modifier = Modifier.padding(16.dp),
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+        HorizontalDividerMMD()
+
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(placeholderStories) { title ->
-                ButtonMMD(onClick = { /* real engine launch comes in Milestone 2 */ }) {
-                    TextMMD(text = title)
-                }
+                TextMMD(
+                    text = title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { /* real engine launch comes in Milestone 2 */ }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                )
+                HorizontalDividerMMD()
             }
         }
     }
