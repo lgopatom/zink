@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.zink.kompakt"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.zink.kompakt"
