@@ -1,0 +1,49 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: docker
+    container:
+      image: eclipse-temurin:17-jdk
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Android SDK cmdline-tools
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq wget unzip
+          mkdir -p /opt/android-sdk/cmdline-tools
+          cd /opt/android-sdk/cmdline-tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip
+          mv cmdline-tools latest
+          echo "ANDROID_HOME=/opt/android-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=/opt/android-sdk" >> "$GITHUB_ENV"
+          echo "/opt/android-sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "/opt/android-sdk/platform-tools" >> "$GITHUB_PATH"
+
+      - name: Accept licenses and install SDK platform
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-35" "build-tools;34.0.0" "platform-tools"
+
+      - name: Install Gradle 8.7
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /opt
+          echo "/opt/gradle-8.7/bin" >> "$GITHUB_PATH"
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zink-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
