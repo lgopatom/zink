@@ -30,5 +30,5 @@ You don't need to — GitHub Actions does it. See `.github/workflows/build.yml`.
 
 ## License
 
-TBD — will depend on what Milestone 2 pulls in (bocfel is MIT; this repo's
-own original code can be whatever license is chosen, e.g. MIT or GPL-2.0+).
+MIT — see `LICENSE`. (bocfel, the engine Milestone 2 will pull in, is also
+MIT; MMD is Apache 2.0. No copyleft entanglement either way.)
