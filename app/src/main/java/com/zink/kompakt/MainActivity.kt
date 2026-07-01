@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mudita.mmd.ThemeMMD
 import com.mudita.mmd.components.text.TextMMD
+import com.zink.kompakt.engine.ZinkEngine
 
 /**
  * Milestone 1: prove the build/CI/sideload pipeline end-to-end with a fake
@@ -59,7 +60,7 @@ private fun displayTitle(filename: String): String =
 private fun LibraryScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         TextMMD(
-            text = "Zink — Story Library",
+            text = "Zink — Story Library (bocfel ${ZinkEngine.version()})",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(16.dp),
         )
@@ -72,9 +73,9 @@ private fun LibraryScreen() {
                     text = displayTitle(filename),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { /* real engine launch comes in Milestone 2 */ }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                        .fillMaxWidth()
+                        .clickable { /* real engine launch comes in Milestone 2 */ }
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
                 )
                 DashedDivider()
             }
@@ -96,18 +97,18 @@ private fun DashedDivider(
 ) {
     Canvas(
         modifier = modifier
-        .fillMaxWidth()
-        .height(thickness),
+            .fillMaxWidth()
+            .height(thickness),
     ) {
         drawLine(
             color = color,
             start = Offset(0f, size.height / 2),
-                 end = Offset(size.width, size.height / 2),
-                 strokeWidth = thickness.toPx(),
-                 pathEffect = PathEffect.dashPathEffect(
-                     floatArrayOf(dashLength.toPx(), gapLength.toPx()),
-                                                        0f,
-                 ),
+            end = Offset(size.width, size.height / 2),
+            strokeWidth = thickness.toPx(),
+            pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(dashLength.toPx(), gapLength.toPx()),
+                0f,
+            ),
         )
     }
 }
