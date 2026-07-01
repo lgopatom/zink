@@ -20,6 +20,8 @@ target_include_directories(zink PRIVATE
 target_compile_definitions(zink PRIVATE
     # Tell bocfel to use Glk for I/O (not its standalone terminal mode)
     ZTERP_GLK
+    # Satisfy glkstart.cpp platform guard — we provide our own startup via JNI
+    ZTERP_GLK_UNIX
     # We don't need Glk Blorb support for plain .z? files
     # ZTERP_GLK_BLORB   # leave off for now
     # No ICU unicode library — bocfel degrades gracefully

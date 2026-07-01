@@ -283,3 +283,22 @@ void glk_exit() {
     // Just throw so the JNI layer can catch it and clean up.
     throw std::runtime_error("glk_exit");
 }
+
+// ---------------------------------------------------------------------------
+// Unix Glk startup stubs (required by glkstart.h when ZTERP_GLK_UNIX is set)
+// ---------------------------------------------------------------------------
+
+extern "C" {
+
+void glkunix_set_base_file(char * /*filename*/) {
+    // No-op on Android — file paths are absolute, no base directory needed.
+}
+
+strid_t glkunix_stream_open_pathname(char *pathname, glui32 /*textmode*/, glui32 /*rock*/) {
+    // Opens a file by path for bocfel's resource loading.
+    // Returns nullptr for now — Blorb resources not supported in Milestone 2.
+    (void)pathname;
+    return nullptr;
+}
+
+} // extern "C"
