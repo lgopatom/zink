@@ -263,12 +263,12 @@ void    glk_set_hyperlink(glui32)                     {}
 void    glk_set_hyperlink_stream(strid_t, glui32)     {}
 
 // Sound
-glui32  glk_schannel_create(glui32)                   { return 0; }
-void    glk_schannel_destroy(schanid_t)               {}
-schanid_t glk_schannel_iterate(schanid_t, glui32*)    { return nullptr; }
-glui32  glk_schannel_get_rock(schanid_t)              { return 0; }
-glui32  glk_schannel_play(schanid_t, glui32)          { return 0; }
-glui32  glk_schannel_play_ext(schanid_t, glui32, glui32, glui32) { return 0; }
+schanid_t glk_schannel_create(glui32)                 { return nullptr; }
+void      glk_schannel_destroy(schanid_t)                      {}
+schanid_t glk_schannel_iterate(schanid_t, glui32*)             { return nullptr; }
+glui32    glk_schannel_get_rock(schanid_t)                     { return 0; }
+glui32    glk_schannel_play(schanid_t, glui32)                 { return 0; }
+glui32    glk_schannel_play_ext(schanid_t, glui32, glui32, glui32) { return 0; }
 void    glk_schannel_stop(schanid_t)                  {}
 void    glk_schannel_set_volume(schanid_t, glui32)    {}
 void    glk_sound_load_hint(glui32, glui32)           {}
