@@ -272,6 +272,9 @@ glui32    glk_schannel_play_ext(schanid_t, glui32, glui32, glui32) { return 0; }
 void    glk_schannel_stop(schanid_t)                  {}
 void    glk_schannel_set_volume(schanid_t, glui32)    {}
 void    glk_sound_load_hint(glui32, glui32)           {}
+void    glk_set_interrupt_handler(void (*func)(void))  { (void)func; }
+void    glk_set_echo_line_event(winid_t, glui32)       {}
+void    glk_set_terminators_line_event(winid_t, glui32*, glui32) {}
 
 // ---------------------------------------------------------------------------
 // glk_exit — called by bocfel when the story ends or the player quits
