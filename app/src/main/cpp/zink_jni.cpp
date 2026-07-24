@@ -27,8 +27,11 @@
 extern void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                std::function<std::string()>  get_line);
 
-// Bocfel's Glk entry point
+// Bocfel's Glk entry point — defined in zterp.cpp as C++ but called via C linkage
 extern "C" void glk_main();
+
+// Bocfel's Unix startup — defined in glkstart.cpp
+extern "C" int glkunix_startup_code(void*);
 
 // ---------------------------------------------------------------------------
 // Shared state between interpreter thread and Kotlin
@@ -99,7 +102,6 @@ static void interpreter_thread(std::string story_path) {
     // Bocfel's glkstart.cpp startup reads glkunix_arguments via
     // glkunix_startup_code, which is called by the Glk library startup.
     // Since we're our own Glk, we call it directly here.
-    extern int glkunix_startup_code(void*);
     struct { int argc; char** argv; } startup_data = { 2, argv };
     if (!glkunix_startup_code(&startup_data)) {
         LOGE("glkunix_startup_code failed");
