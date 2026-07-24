@@ -11,6 +11,7 @@
 #include <functional>
 #include <jni.h>
 #include <android/log.h>
+#include "glk/glkstart.h"
 
 #define LOG_TAG "ZinkGlk"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
@@ -305,3 +306,29 @@ strid_t glkunix_stream_open_pathname(char *pathname, glui32 /*textmode*/, glui32
 }
 
 } // extern "C"
+
+// ---------------------------------------------------------------------------
+// Main entry point called from the interpreter thread in zink_jni.cpp
+// Defined here so glk_main/glkunix_startup_code are in the same C++ context.
+// ---------------------------------------------------------------------------
+
+// These are C++ functions defined in bocfel — no extern "C" needed here.
+void glk_main();
+int  glkunix_startup_code(glkunix_startup_t *data);
+
+void zink_run(const char* story_path) {
+    static char arg0[] = "zink";
+    static char arg1[1024];
+    std::snprintf(arg1, sizeof(arg1), "%s", story_path);
+    static char* argv[] = { arg0, arg1, nullptr };
+
+    glkunix_startup_t startup_data;
+    startup_data.argc = 2;
+    startup_data.argv = argv;
+
+    if (!glkunix_startup_code(&startup_data)) {
+        LOGE("glkunix_startup_code failed");
+        return;
+    }
+    glk_main();
+}

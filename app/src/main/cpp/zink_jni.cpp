@@ -27,12 +27,6 @@
 extern void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                std::function<std::string()>  get_line);
 
-// Bocfel's Glk entry point — defined in zterp.cpp as C++ but called via C linkage
-extern "C" void glk_main();
-
-// Bocfel's Unix startup — defined in glkstart.cpp
-extern "C" int glkunix_startup_code(void*);
-
 // ---------------------------------------------------------------------------
 // Shared state between interpreter thread and Kotlin
 // ---------------------------------------------------------------------------
@@ -89,40 +83,23 @@ static std::string on_get_line() {
 // Interpreter thread entry
 // ---------------------------------------------------------------------------
 
+// Defined in zink_glk.cpp — avoids C++ name mangling issues with
+// calling glk_main/glkunix_startup_code directly across translation units.
+extern void zink_run(const char* story_path);
+
 static void interpreter_thread(std::string story_path) {
     LOGI("Interpreter thread started: %s", story_path.c_str());
-
-    // Point bocfel at our story file via the glkunix argv mechanism.
-    // glkunix_startup_code in glkstart.cpp reads these.
-    static char arg0[] = "zink";
-    static char arg1[1024];
-    std::snprintf(arg1, sizeof(arg1), "%s", story_path.c_str());
-    static char* argv[] = { arg0, arg1, nullptr };
-
-    // Bocfel's glkstart.cpp startup reads glkunix_arguments via
-    // glkunix_startup_code, which is called by the Glk library startup.
-    // Since we're our own Glk, we call it directly here.
-    struct { int argc; char** argv; } startup_data = { 2, argv };
-    if (!glkunix_startup_code(&startup_data)) {
-        LOGE("glkunix_startup_code failed");
-        g_running = false;
-        return;
-    }
-
     try {
-        glk_main();
+        zink_run(story_path.c_str());
     } catch (const std::exception& e) {
-        LOGI("glk_main exited: %s", e.what());
+        LOGI("Interpreter exited: %s", e.what());
     } catch (...) {
-        LOGI("glk_main exited");
+        LOGI("Interpreter exited");
     }
-
     g_running = false;
-    // Unblock any waiting on_get_line
     g_in_cv.notify_all();
     LOGI("Interpreter thread finished");
 }
-
 // ---------------------------------------------------------------------------
 // JNI exports
 // ---------------------------------------------------------------------------
