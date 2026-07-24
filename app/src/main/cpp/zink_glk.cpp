@@ -18,10 +18,9 @@
 
 // Glk headers declare everything with C linkage already.
 // Our definitions must match, so wrap the entire file body.
+extern "C" {
 #include "glk/glk.h"
 #include "glk/glkstart.h"
-
-extern "C" {
 
 // ---------------------------------------------------------------------------
 // Callbacks from JNI layer — set before glk_main() is called
