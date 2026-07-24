@@ -11,6 +11,7 @@
 #include <functional>
 #include <jni.h>
 #include <android/log.h>
+#include "glk/glk.h"
 #include "glk/glkstart.h"
 
 #define LOG_TAG "ZinkGlk"
@@ -292,8 +293,6 @@ void glk_exit() {
 // Unix Glk startup stubs (required by glkstart.h when ZTERP_GLK_UNIX is set)
 // ---------------------------------------------------------------------------
 
-extern "C" {
-
 void glkunix_set_base_file(char * /*filename*/) {
     // No-op on Android — file paths are absolute, no base directory needed.
 }
@@ -304,8 +303,6 @@ strid_t glkunix_stream_open_pathname(char *pathname, glui32 /*textmode*/, glui32
     (void)pathname;
     return nullptr;
 }
-
-} // extern "C"
 
 // ---------------------------------------------------------------------------
 // Main entry point called from the interpreter thread in zink_jni.cpp
