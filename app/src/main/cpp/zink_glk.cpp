@@ -11,16 +11,17 @@
 #include <functional>
 #include <jni.h>
 #include <android/log.h>
-#include "glk/glk.h"
-#include "glk/glkstart.h"
 
 #define LOG_TAG "ZinkGlk"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-extern "C" {
+// Glk headers declare everything with C linkage already.
+// Our definitions must match, so wrap the entire file body.
 #include "glk/glk.h"
-}
+#include "glk/glkstart.h"
+
+extern "C" {
 
 // ---------------------------------------------------------------------------
 // Callbacks from JNI layer — set before glk_main() is called
@@ -329,3 +330,5 @@ void zink_run(const char* story_path) {
     }
     glk_main();
 }
+
+} // extern "C"
