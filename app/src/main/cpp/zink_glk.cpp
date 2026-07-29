@@ -154,6 +154,8 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     glui32 glk_style_measure(winid_t, glui32, glui32, glui32*) { return 0; }
 
                                                     // Input
+                                                    static glui32 g_last_line_len = 0;
+
                                                     void glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32) {
                                                         if (!win || !buf || !g_get_line) return;
                                                         std::string line = g_get_line();
@@ -161,7 +163,9 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         if (len > maxlen - 1) len = maxlen - 1;
                                                         std::memcpy(buf, line.c_str(), len);
                                                         buf[len] = '\0';
+                                                        g_last_line_len = len;
                                                     }
+
                                                     void glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32) {
                                                         if (!win || !buf || !g_get_line) return;
                                                         std::string line = g_get_line();
@@ -169,6 +173,7 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         if (len > maxlen - 1) len = maxlen - 1;
                                                         for (glui32 i = 0; i < len; i++) buf[i] = static_cast<uint8_t>(line[i]);
                                                         buf[len] = 0;
+                                                        g_last_line_len = len;
                                                     }
 
                                                     void glk_cancel_line_event(winid_t, event_t *ev) { if (ev) ev->type = evtype_None; }
@@ -191,8 +196,9 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         } else {
                                                             ev->type = evtype_LineInput;
                                                             ev->win  = &g_mainwin;
-                                                            ev->val1 = 0;
+                                                            ev->val1 = g_last_line_len;
                                                             ev->val2 = 0;
+                                                            g_last_line_len = 0;
                                                         }
                                                     }
                                                     void glk_select_poll(event_t *ev) { if (ev) ev->type = evtype_None; }
