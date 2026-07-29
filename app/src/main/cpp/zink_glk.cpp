@@ -170,17 +170,30 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         for (glui32 i = 0; i < len; i++) buf[i] = static_cast<uint8_t>(line[i]);
                                                         buf[len] = 0;
                                                     }
-                                                    void glk_request_char_event(winid_t)           {}
-                                                    void glk_request_char_event_uni(winid_t)       {}
-                                                    void glk_cancel_char_event(winid_t)            {}
+
                                                     void glk_cancel_line_event(winid_t, event_t *ev) { if (ev) ev->type = evtype_None; }
+
+                                                    static bool g_char_input_requested = false;
+
+                                                    void glk_request_char_event(winid_t)     { g_char_input_requested = true; }
+                                                    void glk_request_char_event_uni(winid_t) { g_char_input_requested = true; }
+                                                    void glk_cancel_char_event(winid_t)      { g_char_input_requested = false; }
 
                                                     void glk_select(event_t *ev) {
                                                         if (!ev) return;
-                                                        ev->type = evtype_LineInput;
-                                                        ev->win  = &g_mainwin;
-                                                        ev->val1 = 0;
-                                                        ev->val2 = 0;
+                                                        if (g_char_input_requested) {
+                                                            std::string line = g_get_line ? g_get_line() : "";
+                                                            ev->type = evtype_CharInput;
+                                                            ev->win  = &g_mainwin;
+                                                            ev->val1 = line.empty() ? '\n' : static_cast<uint32_t>(line[0]);
+                                                            ev->val2 = 0;
+                                                            g_char_input_requested = false;
+                                                        } else {
+                                                            ev->type = evtype_LineInput;
+                                                            ev->win  = &g_mainwin;
+                                                            ev->val1 = 0;
+                                                            ev->val2 = 0;
+                                                        }
                                                     }
                                                     void glk_select_poll(event_t *ev) { if (ev) ev->type = evtype_None; }
                                                     void glk_request_mouse_event(winid_t)          {}
