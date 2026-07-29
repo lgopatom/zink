@@ -71,10 +71,12 @@ private fun ZinkApp() {
 // then update the path below to match.
 // ---------------------------------------------------------------------------
 private val placeholderStories = listOf(
-    Pair("Trinity",                    "/sdcard/Trinity.z4"),
-                                        Pair("A Mind Forever Voyaging",    "/sdcard/AMFV.z5"),
-                                        Pair("Curses",                     "/sdcard/Curses.z5"),
-                                        Pair("Anchorhead",                 "/sdcard/Anchorhead.z5"),
+    Pair("Trinity",              "/sdcard/Interactive.Fiction/trinity.z4"),
+                                        Pair("Advent",               "/sdcard/Interactive.Fiction/Advent.z5"),
+                                        Pair("Shade",                "/sdcard/Interactive.Fiction/shade.z5"),
+                                        Pair("Theatre",              "/sdcard/Interactive.Fiction/theatre.z5"),
+                                        Pair("Awaken",               "/sdcard/Interactive.Fiction/awaken.z5"),
+                                        Pair("905",                  "/sdcard/Interactive.Fiction/905.z5"),
 )
 
 @Composable
