@@ -23,6 +23,9 @@
 
 #ifndef GT_START_H
 #define GT_START_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* We define our own TRUE and FALSE and NULL, because ANSI
     is a strange world. */
@@ -77,5 +80,8 @@ extern strid_t glkunix_stream_open_pathname(char *pathname, glui32 textmode,
 /* Send all exit calls to our custom exit handler */
 /* #define exit(x) ___wrap_exit(x) -- disabled for Android */
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* GT_START_H */
 

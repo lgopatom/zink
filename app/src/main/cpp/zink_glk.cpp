@@ -52,7 +52,7 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                         // whatever linkage the compiler gives to the declarations in glk.h.
                         // Since glk.h has no __cplusplus guards, we wrap definitions in extern "C".
                         // ---------------------------------------------------------------------------
-                        extern "C" {
+
 
                             // Window management
                             winid_t glk_window_open(winid_t split, glui32 /*method*/, glui32 /*size*/,
@@ -246,7 +246,6 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         throw std::runtime_error("glk_exit");
                                                     }
 
-                        } // extern "C"
 
                         // ---------------------------------------------------------------------------
                         // zink_run — called from the interpreter thread in zink_jni.cpp.

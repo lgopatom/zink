@@ -19,6 +19,9 @@
     it's really a 32-bit signed integer type. If they're not, horrible
     things will happen. */
 #include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef uint32_t glui32;
 typedef int32_t glsi32;
 
@@ -491,5 +494,9 @@ void initByteBuffers(int max_refs);
 void freeByteBuffers();
 jobject wrapByteBuffer(void* address, jlong capacity);
 void unwrapByteBuffer(JNIEnv * e, jobject bb);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* GLK_H */
