@@ -57,7 +57,9 @@ fun GameScreen(
 
     LaunchedEffect(storyPath) {
         while (isActive) {
-            val chunk = ZinkEngine.pollOutput()
+            // Strip bocfel's own "> " prompt — our UI provides one in the input row.
+            val raw = ZinkEngine.pollOutput()
+            val chunk = raw.trimEnd().removeSuffix(">").trimEnd()
             if (chunk.isNotEmpty()) {
                 val incoming = chunk.split("\n")
                 if (lines.isEmpty()) {

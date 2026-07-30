@@ -75,7 +75,9 @@ private fun LibraryScreen(onStorySelected: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         TextMMD(
             text = "Zink",
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineLarge.copy(
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            ),
             modifier = Modifier.padding(start = 16.dp, top = 20.dp, bottom = 4.dp),
         )
         TextMMD(
