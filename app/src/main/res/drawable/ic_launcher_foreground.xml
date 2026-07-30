@@ -4,19 +4,5 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-
-    <!-- Rounded square border: use a rect-style path with explicit line+arc segments.
-         Canvas: 108x108. Icon area: 81x81 centred = x13.5 to x94.5, y13.5 to y94.5.
-         Corner radius: 19. Stroke inside means effective drawn at x14.5..x93.5 with r=18. -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="2.5"
-        android:pathData="M33.5,14.5 L74.5,14.5 Q93.5,14.5 93.5,33.5 L93.5,74.5 Q93.5,93.5 74.5,93.5 L33.5,93.5 Q14.5,93.5 14.5,74.5 L14.5,33.5 Q14.5,14.5 33.5,14.5 Z"/>
-
-    <!-- Z: bold geometric, fills the symbol area roughly 36,36 to 72,72 -->
-    <path
-        android:fillColor="#FF000000"
-        android:pathData="M36,36 L72,36 L72,42 L46,66 L72,66 L72,72 L36,72 L36,66 L62,42 L36,42 Z"/>
-
+    <!-- Intentionally empty — all content is in the background layer -->
 </vector>
