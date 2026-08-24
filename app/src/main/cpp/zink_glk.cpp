@@ -11,6 +11,7 @@
 #include <functional>
 #include <jni.h>
 #include <android/log.h>
+#include <sys/stat.h>
 
 #define LOG_TAG "ZinkGlk"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
@@ -208,13 +209,23 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     void glk_cancel_hyperlink_event(winid_t)       {}
 
                                                     // File references
+                                                    static const char* SAVE_DIR = "/sdcard/Android/data/com.zink.kompakt/files/saves";
+
+                                                    static std::string save_path(const char* name) {
+                                                        mkdir(SAVE_DIR, 0755);
+                                                        std::string path = SAVE_DIR;
+                                                        path += "/";
+                                                        path += (name && name[0]) ? name : "quicksave.sav";
+                                                        return path;
+                                                    }
+
                                                     frefid_t glk_fileref_create_temp(glui32, glui32 rock) {
                                                         auto *r = new glk_fileref_struct(); r->rock = rock;
-                                                        r->path = "/data/local/tmp/zink_save.sav"; return r;
+                                                        r->path = save_path("temp.sav"); return r;
                                                     }
                                                     frefid_t glk_fileref_create_by_name(glui32, char *name, glui32 rock) {
                                                         auto *r = new glk_fileref_struct(); r->rock = rock;
-                                                        r->path = name ? name : "zink_save.sav"; return r;
+                                                        r->path = save_path(name); return r;
                                                     }
                                                     frefid_t glk_fileref_create_by_prompt(glui32 u, glui32, glui32 rock) {
                                                         return glk_fileref_create_temp(u, rock);
