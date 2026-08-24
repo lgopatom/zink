@@ -40,7 +40,10 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                         // Minimal window/stream structs
                         // ---------------------------------------------------------------------------
                         struct glk_window_struct  { glui32 rock; };
-                        struct glk_stream_struct  { glui32 rock; };
+                        struct glk_stream_struct  {
+                            glui32 rock = 0;
+                            FILE*  file = nullptr;
+                        };
                         struct glk_fileref_struct { glui32 rock; std::string path; };
 
                         static glk_window_struct g_mainwin = { 0 };
@@ -94,9 +97,33 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     // Streams
                                                     strid_t glk_stream_open_memory(char*, glui32, glui32, glui32)  { return nullptr; }
                                                     strid_t glk_stream_open_memory_uni(glui32*, glui32, glui32, glui32) { return nullptr; }
-                                                    strid_t glk_stream_open_file(frefid_t, glui32, glui32)         { return nullptr; }
-                                                    strid_t glk_stream_open_file_uni(frefid_t, glui32, glui32)     { return nullptr; }
-                                                    void    glk_stream_close(strid_t, stream_result_t*)             {}
+                                                    strid_t glk_stream_open_file(frefid_t fref, glui32 fmode, glui32 rock) {
+                                                        if (!fref) return nullptr;
+                                                        const char* mode;
+                                                        switch (fmode) {
+                                                            case filemode_Write:       mode = "wb";  break;
+                                                            case filemode_ReadWrite:   mode = "r+b"; break;
+                                                            case filemode_WriteAppend: mode = "ab";  break;
+                                                            default:                   mode = "rb";  break;
+                                                        }
+                                                        FILE* f = std::fopen(fref->path.c_str(), mode);
+                                                        if (!f && fmode == filemode_ReadWrite)
+                                                            f = std::fopen(fref->path.c_str(), "w+b");
+                                                        if (!f) return nullptr;
+                                                        auto* str = new glk_stream_struct();
+                                                        str->rock = rock;
+                                                        str->file = f;
+                                                        return str;
+                                                    }
+                                                    strid_t glk_stream_open_file_uni(frefid_t fref, glui32 fmode, glui32 rock) {
+                                                        return glk_stream_open_file(fref, fmode, rock);
+                                                    }
+                                                    void glk_stream_close(strid_t str, stream_result_t* result) {
+                                                        if (!str) return;
+                                                        if (str->file) std::fclose(str->file);
+                                                        if (result) { result->readcount = 0; result->writecount = 0; }
+                                                        if (str != &g_mainstr && str != &g_current) delete str;
+                                                    }
                                                     strid_t glk_stream_iterate(strid_t str, glui32 *rock) {
                                                         if (!str) { if (rock) *rock = g_mainstr.rock; return &g_mainstr; }
                                                         return nullptr;
@@ -111,7 +138,8 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     void glk_put_char(unsigned char c) {
                                                         if (g_put_char) g_put_char(static_cast<uint32_t>(c));
                                                     }
-                                                    void glk_put_char_stream(strid_t, unsigned char c) {
+                                                    void glk_put_char_stream(strid_t str, unsigned char c) {
+                                                        if (str && str->file) { std::fputc(c, str->file); return; }
                                                         if (g_put_char) g_put_char(static_cast<uint32_t>(c));
                                                     }
                                                     void glk_put_char_uni(glui32 c) {
@@ -141,7 +169,13 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     }
                                                     void glk_put_buffer_stream_uni(strid_t, glui32 *buf, glui32 len) { glk_put_buffer_uni(buf, len); }
 
-                                                    glsi32 glk_get_char_stream(strid_t)            { return -1; }
+                                                    glsi32 glk_get_char_stream(strid_t str) {
+                                                        if (str && str->file) {
+                                                            int c = std::fgetc(str->file);
+                                                            return c == EOF ? -1 : c;
+                                                        }
+                                                        return -1;
+                                                    }
                                                     glsi32 glk_get_char_stream_uni(strid_t)        { return -1; }
                                                     glui32 glk_get_line_stream(strid_t, char*, glui32) { return 0; }
                                                     glui32 glk_get_line_stream_uni(strid_t, glui32*, glui32) { return 0; }
