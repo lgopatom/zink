@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include <cerrno>
 
+extern std::string g_save_dir;
+
 #define LOG_TAG "ZinkGlk"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -265,10 +267,9 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     }
 
                                                     static std::string save_path(const char* name) {
-                                                        mkdirp(SAVE_DIR);
-                                                        std::string path = SAVE_DIR;
-                                                        path += "/";
-                                                        path += (name && name[0]) ? name : "quicksave.sav";
+                                                        const std::string dir = g_save_dir.empty() ? std::string(SAVE_DIR) : g_save_dir;
+                                                        mkdirp(dir.c_str());
+                                                        return dir + "/" + ((name && name[0]) ? name : "quicksave.sav");
                                                         return path;
                                                     }
 

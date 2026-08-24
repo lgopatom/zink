@@ -49,6 +49,14 @@ private sealed class Screen {
 @Composable
 private fun ZinkApp() {
     var screen: Screen by remember { mutableStateOf(Screen.Library) }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(Unit) {
+        val saveDir = context.getExternalFilesDir("saves")
+        saveDir?.mkdirs()
+        ZinkEngine.setSaveDir(saveDir?.absolutePath ?: "")
+    }
+
     when (val s = screen) {
         is Screen.Library -> LibraryScreen(
             onStorySelected = { path -> screen = Screen.Game(path) }

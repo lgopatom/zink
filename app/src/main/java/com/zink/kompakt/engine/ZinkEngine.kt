@@ -38,4 +38,7 @@ object ZinkEngine {
 
     /** Returns true if the interpreter thread is currently running. */
     external fun isRunning(): Boolean
+
+    external fun setSaveDir(path: String)
+
 }

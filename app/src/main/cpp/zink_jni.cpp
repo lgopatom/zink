@@ -44,6 +44,7 @@ static bool                    g_input_ready = false;
 // Interpreter thread lifecycle
 static std::thread             g_interp_thread;
 static std::atomic<bool>       g_running{false};
+static std::string             g_save_dir;
 
 // ---------------------------------------------------------------------------
 // Callback implementations — called from bocfel's Glk layer
@@ -142,6 +143,14 @@ Java_com_zink_kompakt_engine_ZinkEngine_start(JNIEnv *env, jobject, jstring path
 
     LOGI("Interpreter started for: %s", story_path.c_str());
     return JNI_TRUE;
+
+    JNIEXPORT void JNICALL
+    Java_com_zink_kompakt_engine_ZinkEngine_setSaveDir(JNIEnv *env, jobject, jstring path) {
+        const char* p = env->GetStringUTFChars(path, nullptr);
+        g_save_dir = p ? p : "";
+        env->ReleaseStringUTFChars(path, p);
+        LOGI("Save dir set to: %s", g_save_dir.c_str());
+    }
 }
 
 JNIEXPORT void JNICALL
