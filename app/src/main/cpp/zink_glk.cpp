@@ -211,8 +211,21 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     // File references
                                                     static const char* SAVE_DIR = "/sdcard/Android/data/com.zink.kompakt/files/saves";
 
+                                                    static void mkdirp(const char* path) {
+                                                        char tmp[512];
+                                                        std::snprintf(tmp, sizeof(tmp), "%s", path);
+                                                        for (char* p = tmp + 1; *p; p++) {
+                                                            if (*p == '/') {
+                                                                *p = '\0';
+                                                                mkdir(tmp, 0755);
+                                                                *p = '/';
+                                                            }
+                                                        }
+                                                        mkdir(tmp, 0755);
+                                                    }
+
                                                     static std::string save_path(const char* name) {
-                                                        mkdir(SAVE_DIR, 0755);
+                                                        mkdirp(SAVE_DIR);
                                                         std::string path = SAVE_DIR;
                                                         path += "/";
                                                         path += (name && name[0]) ? name : "quicksave.sav";
