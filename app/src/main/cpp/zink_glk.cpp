@@ -12,6 +12,7 @@
 #include <jni.h>
 #include <android/log.h>
 #include <sys/stat.h>
+#include <cerrno>
 
 #define LOG_TAG "ZinkGlk"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
@@ -98,7 +99,8 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                     strid_t glk_stream_open_memory(char*, glui32, glui32, glui32)  { return nullptr; }
                                                     strid_t glk_stream_open_memory_uni(glui32*, glui32, glui32, glui32) { return nullptr; }
                                                     strid_t glk_stream_open_file(frefid_t fref, glui32 fmode, glui32 rock) {
-                                                        if (!fref) return nullptr;
+                                                        if (!fref) { LOGE("glk_stream_open_file: null fref"); return nullptr; }
+                                                        LOGI("glk_stream_open_file: path=%s fmode=%u", fref->path.c_str(), fmode);
                                                         const char* mode;
                                                         switch (fmode) {
                                                             case filemode_Write:       mode = "wb";  break;
@@ -109,7 +111,11 @@ void zink_set_callbacks(std::function<void(uint32_t)> put_char,
                                                         FILE* f = std::fopen(fref->path.c_str(), mode);
                                                         if (!f && fmode == filemode_ReadWrite)
                                                             f = std::fopen(fref->path.c_str(), "w+b");
-                                                        if (!f) return nullptr;
+                                                        if (!f) {
+                                                            LOGE("glk_stream_open_file: fopen failed for %s (errno=%d)", fref->path.c_str(), errno);
+                                                            return nullptr;
+                                                        }
+                                                        LOGI("glk_stream_open_file: opened ok");
                                                         auto* str = new glk_stream_struct();
                                                         str->rock = rock;
                                                         str->file = f;
